@@ -1,0 +1,92 @@
+module opcode(input[1:0] opcode, 
+              output reg addOp, 
+              output reg subOp,  
+              output reg mulOp,
+              output reg divOp);
+
+  always@(*) begin   
+    case (opcode)
+      2'b00:begin
+        addOp = 1'b1;
+        subOp = 1'b0;
+        mulOp = 1'b0;
+        divOp = 1'b0;
+      end
+      2'b01: begin
+        addOp = 1'b0;
+        subOp = 1'b1;
+        mulOp = 1'b0;
+        divOp = 1'b0;
+      end
+      2'b10:begin
+        addOp = 1'b0;
+        subOp = 1'b0;
+        mulOp = 1'b1;
+        divOp = 1'b0;
+      end
+      2'b11:begin
+       addOp = 1'b0;
+       subOp = 1'b0;
+       mulOp = 1'b0;
+       divOp = 1'b1;
+      end 
+    endcase  
+  end 
+endmodule
+    
+
+/////////////////////////////////////////////
+module testbench(); 
+reg[1:0] opcode_t;   
+wire addOp_t; 
+wire subOp_t;  
+wire mulOp_t;
+wire divOp_t;
+  
+  opcode test_opcode (opcode_t, addOp_t, subOp_t, mulOp_t, divOp_t);
+  
+  initial begin
+     //case 1: addition
+    opcode_t = 2'b00;
+   #1 $display("Addition");
+   #1 $display("Opcode is %b", opcode_t);
+   #1 $display("addOp is %b", addOp_t);
+   #1 $display("subOp is %b", subOp_t);
+   #1 $display("mulOp is %b", mulOp_t);
+   #1 $display("divOp is %b", divOp_t);
+   #1 $display("");
+    
+      //case 2: subtraction
+    opcode_t = 2'b01;
+    #1 $display("Subtraction");
+   #1 $display("Opcode is %b", opcode_t);
+   #1 $display("addOp is %b", addOp_t);
+   #1 $display("subOp is %b", subOp_t);
+   #1 $display("mulOp is %b", mulOp_t);
+   #1 $display("divOp is %b", divOp_t);
+   #1 $display("");
+    
+       //case 3: multiplication
+    opcode_t = 2'b10;
+    #1 $display("Multiplication");
+   #1 $display("Opcode is %b", opcode_t);
+   #1 $display("addOp is %b", addOp_t);
+   #1 $display("subOp is %b", subOp_t);
+   #1 $display("mulOp is %b", mulOp_t);
+   #1 $display("divOp is %b", divOp_t);
+   #1 $display("");
+    
+       //case 4: division
+    opcode_t = 2'b11;
+   #1 $display("Division");
+   #1 $display("Opcode is %b", opcode_t);
+   #1 $display("addOp is %b", addOp_t);
+   #1 $display("subOp is %b", subOp_t);
+   #1 $display("mulOp is %b", mulOp_t);
+   #1 $display("divOp is %b", divOp_t);
+   #1 $display("");
+    
+  
+  end
+  endmodule
+    

@@ -1,0 +1,42 @@
+// Code your design here
+`include "InstructionMemory.sv"
+`include "PCADDER.sv"
+module First_Stage(input clock,
+                   input [31:0] PC,
+                   output reg [10:0] Instruction);
+  
+  wire [10:0] Inst;
+  wire [31:0] PC_4;
+  
+   PCADDER PCADDER_Stage1 (PC,PC_4);
+  InstructionMemory InstructionMemory_Stage1 (PC_4,Inst);
+ 
+  always@(posedge clock)
+    begin
+      assign Instruction = Inst;
+  end
+
+endmodule
+////////////////////////////////////////////////////////////
+
+// Code your testbench here
+// or browse Examples
+
+module testbench();
+  reg clk_t;
+  wire [10:0] Instruction_t;
+  reg [31:0] PC_t;
+  
+  First_Stage test_First_Stage(clk_t,PC_t,Instruction_t);
+  
+     always 
+begin
+clk_t = 1; #5; clk_t = 0; #5; // 10ns period
+end
+  
+   initial begin
+    PC_t = 32'h00000000;
+    #1
+     $display("instruction is %b", Instruction_t);
+  end
+endmodule

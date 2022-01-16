@@ -1,0 +1,93 @@
+`include "regfile.sv"
+`include "InstructionSeperation.sv"
+`include "opcode.sv"
+
+module Second_Stage(input clock,
+                    input [10:0] Instruction,
+                    output [31:0] Rt_Data_Out,
+                    output [31:0] Rs_Data_Out,
+                    output [2:0] Rd_Address_Out,
+                    output Addition_Flag_Out,
+                    output Subtraction_Flag_Out,
+                    output Multiplication_Flag_Out,
+                    output Division_Flag_Out);
+  
+  //Instruction Seperation instance wires
+  wire [1:0] opcode;
+  wire [2:0] Rs_Address;
+  wire [2:0] Rt_Address;
+  wire [2:0] Rd_Address;
+  
+  //opcode instance wires
+  wire Addition_Flag;
+  wire Subtraction_Flag;
+  wire Multiplication_Flag;
+  wire Division_Flag;
+  
+  //regfile instance wires
+  wire [31:0] Rt_Data;
+  wire [31:0] Rs_Data;
+  
+  //Outputs
+  reg [31:0] Rt_Data_Out;
+  reg [31:0] Rs_Data_Out;
+  reg [2:0] Rd_Address_Out;
+  reg Addition_Flag_Out;
+  reg Subtraction_Flag_Out;
+  reg Multiplication_Flag_Out;
+  reg Division_Flag_Out;
+  
+  InstructionSeperation IS_Stage2(Instruction,opcode,Rs_Address,Rt_Address,Rd_Address);
+  opcode opcode_Stage2 (opcode,Addition_Flag,Subtraction_Flag,Multiplication_Flag,Division_Flag);
+  regfile regfile_Stage2 (clock,Rs_Address,Rt_Address,Rd_Address,32'b0,1'b1,Rt_Data,Rs_Data);
+ 
+  always @(clock) 
+    begin
+        assign Rt_Data_Out = Rt_Data;
+  		assign Rs_Data_Out = Rs_Data;
+  		assign Rd_Address_Out = Rd_Address;
+  		assign Addition_Flag_Out = Addition_Flag;
+  		assign Subtraction_Flag_Out = Subtraction_Flag;
+  		assign Multiplication_Flag_Out = Multiplication_Flag;
+  		assign Division_Flag_Out = Division_Flag;
+    end
+endmodule
+/////////////////////////////////////////////////////////////////////////////////
+
+// Code your testbench here
+// or browse Examples
+
+module testbench();
+  reg clk_t;
+  reg [10:0] Instruction_t;
+  wire [31:0] Rt_Data_Out_t;
+  wire [31:0] Rs_Data_Out_t;
+  wire [2:0] Rd_Address_Out_t;
+  wire Addition_Flag_Out_t;
+  wire Subtraction_Flag_Out_t;
+  wire Multiplication_Flag_Out_t;
+  wire Division_Flag_Out_t;
+  
+  Second_Stage test_Second_Stage(clk_t,Instruction_t,Rt_Data_Out_t,Rs_Data_Out_t,Rd_Address_Out_t,Addition_Flag_Out_t,Subtraction_Flag_Out_t,Multiplication_Flag_Out_t,Division_Flag_Out_t);
+  
+     always 
+begin
+clk_t = 1; #5; clk_t = 0; #5; // 10ns period
+end
+  
+   initial begin
+    Instruction_t = 11'b00001000111;
+    #1
+     $display("instruction is %b", Instruction_t);
+     $display("Rt_Data is %b", Rt_Data_Out_t);
+     $display("Rs_Data is %b", Rs_Data_Out_t);
+     $display("Rd_Address is %b", Rd_Address_Out_t);
+     
+     $display("Addition Flag is %b", Addition_Flag_Out_t);
+     $display("Subtraction Flag is %b", Subtraction_Flag_Out_t);
+     $display("Multiplication Flag is %b", Multiplication_Flag_Out_t);
+     $display("Division Flag is %b", Division_Flag_Out_t);
+ 
+     
+  end
+endmodule

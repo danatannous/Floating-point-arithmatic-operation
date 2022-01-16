@@ -1,0 +1,70 @@
+
+// Code your design here
+module regfile(input clk,
+               input [2:0]Rs,
+               input [2:0]Rt,
+               input [2:0]Rd,
+               input [31:0] Rd_data,
+               input enable,
+               output [31:0] Rt_data,
+               output [31:0] Rs_data);
+               //output reg[31:0] Rd_data_out
+  wire [31:0] Rt_data;
+  wire [31:0] Rs_data;
+  reg[31:0] register[7:0];
+  
+initial begin
+  register[0] <= 32'h00000000;
+  register[1] <= 32'h00000011;
+  register[2] <= 32'h00000000;
+  register[3] <= 32'h00000000;
+  register[4] <= 32'h00000000;
+  register[5] <= 32'h00000000;
+  register[6] <= 32'h00000000;
+  register[7] <= 32'h00000000;
+  
+end
+  
+  always @(negedge clk) begin
+    if(enable) begin
+    register [Rd] <= Rd_data;
+   // Rd_data_out = register[Rd];
+    end
+  end
+  
+  
+     assign Rt_data = register[Rt];
+     assign Rs_data = register[Rs];
+ 
+      
+    
+    endmodule
+///////////////////////////////////////////////////
+module testbench();
+
+reg clk_t;
+reg [2:0] Rs_t;
+reg [2:0]Rt_t;
+reg [2:0]Rd_t;
+  reg [31:0] Rd_data_t;
+  reg enable_t;
+  wire [31:0] Rt_data_t;
+  wire [31:0] Rs_data_t;
+
+  regfile test_regfile (clk_t, Rs_t, Rt_t,Rd_t,Rd_data_t,enable_t,Rt_data_t,Rs_data_t);
+  
+  initial begin
+	clk_t = 1'b0;
+    #1
+    clk_t = ~clk_t;
+    #1
+    Rs_t= 3'b00; Rt_t = 3'b001; Rd_t = 3'b010;
+
+    
+    $display("Rt data is %b", Rt_data_t);
+    $display("Rs data is %b", Rs_data_t);
+  
+    
+  end
+  endmodule
+    

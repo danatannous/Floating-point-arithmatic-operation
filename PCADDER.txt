@@ -1,0 +1,36 @@
+// Code your design here
+
+module PCADDER (PCin,PCout);
+  input [31:0] PCin;
+  output reg [31:0] PCout;
+  
+  
+  
+  always @(*)
+    begin
+      
+      PCout=PCin+32'b00000000000000000000000000000100;
+      
+    end
+  
+endmodule
+///////////////////////////////////////
+// Code your testbench here
+// or browse Examples
+module PCADDERtb();
+  
+  reg [31:0] PCin_;
+  wire [31:0] PCout_;
+  PCADDER pc(PCin_,PCout_);
+  initial begin
+    PCin_=32'b000000000000000000000000000000;
+    #5
+    $monitor("pc in= %b",PCin_);
+    #5
+    $monitor("pc out= %b",PCout_);
+    
+  end
+endmodule
+    
+    
+  

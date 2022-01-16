@@ -1,0 +1,42 @@
+module EXE_WB_reg(input clk,
+                  input [31:0] Result_In,
+                  input [2:0] Rd_Add_In,
+                  
+                  output reg [31:0] Result_Out,
+                  output reg [2:0] Rd_Add_Out);
+  
+  always@(posedge clk) begin
+    assign Result_Out = Result_In;
+    assign Rd_Add_Out = Rd_Add_In;
+
+  end
+endmodule
+///////////////////////////////////////////
+// Code your testbench here
+// or browse Examples
+module testbench();
+  
+  reg clk_t;
+  reg [31:0] Result_In_t;
+  reg [2:0] Rd_Add_In_t;
+                  
+  wire [31:0] Result_Out_t;
+  wire [2:0] Rd_Add_Out_t;
+  
+  EXE_WB_reg test_EXE_WB_reg( clk_t,Result_In_t,Rd_Add_In_t,Result_Out_t,Rd_Add_Out_t);
+  
+   always 
+begin
+clk_t = 1; #5; clk_t = 0; #5; // 10ns period
+end
+  
+  initial begin
+    Result_In_t = 32'h00000311;
+    Rd_Add_In_t = 3'b010;
+    
+     #1
+    $display("Result is %b", Result_Out_t);
+    $display("Rd Address is %b", Rd_Add_Out_t);
+    
+  end
+endmodule

@@ -1,0 +1,54 @@
+// Code your design here
+module MUX(output reg [31:0] Output,
+           input [31:0] Input_0,Input_1,
+           input Select);
+
+  always @(*)
+    begin
+      
+      Output=Input_0;
+      
+      if(Select == 0)
+        begin
+          
+          Output=Input_0;
+          
+        end
+      
+      if(Select == 1)
+        
+        begin
+         
+          Output=Input_1;
+          
+        end
+      
+
+      
+    end
+endmodule
+///////////////////////////test
+// Code your testbench here
+// or browse Examples
+module muxt();
+  wire [31:0] Outputt;
+  reg [31:0] Input_0t,Input_1t;
+           reg Selectt;
+  MUX m(Outputt,Input_0t,Input_1t,Selectt);
+  
+  initial begin
+    Selectt=1;
+    Input_0t=32'b00000000000000000000000000000001;
+    Input_1t=32'b00000000000000000000000000000000;
+    #5
+    #5
+    $display("select signal=%b",Selectt);
+    $display("input 0=%b",Input_0t);
+    $display("input 1=%b",Input_1t);
+    $display("output=%b",Outputt);
+  end
+endmodule
+    
+    
+    
+  

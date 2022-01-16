@@ -1,0 +1,32 @@
+
+module IF_ID_reg(input clock,
+  				 input [10:0] Instruction_In,
+                 output reg [10:0] Instruction_Out);
+  
+  always@(posedge clock) begin
+    assign Instruction_Out = Instruction_In;
+  end
+endmodule
+                 
+///////////////////////////////////////////////
+// Code your testbench here
+// or browse Examples
+module testbench();
+  reg clk_t;
+  reg [10:0] Instruction_In_t;
+  wire [10:0] Instruction_Out_t;
+  
+  IF_ID_reg IfIdReg(clk_t,Instruction_In_t, Instruction_	Out_t);
+  
+  always 
+begin
+clk_t = 1; #5; clk_t = 0; #5; // 10ns period
+end
+  
+  initial begin
+   
+    Instruction_In_t = 11'b11001010010;
+    #1
+    $display("instruction is %b", Instruction_Out_t);
+  end
+endmodule

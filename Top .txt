@@ -1,0 +1,98 @@
+
+
+
+`include "Clock.sv"
+`include "First_Stage.sv"
+`include "IF_ID_reg.sv"
+`include "Second_Stage.sv"
+`include "ID_EX_reg.sv"
+`include "EXE.sv"
+`include "EXE_WB_reg.sv"
+
+
+
+
+module TopModule(input[31:0]PC);
+  
+  wire clk;
+  
+ // First Stage wires
+  wire[10:0] Inst;
+  
+  
+  //IF_ID_register wires
+  wire[10:0] Inst_IF_Out;
+ 
+  //Second Stage wires
+  wire [31:0] Rt_Data;
+  wire [31:0] Rs_Data;
+  wire [2:0] Rd_Address;
+  wire Addition_Flag;
+  wire Subtraction_Flag;
+  wire Multiplication_Flag;
+  wire Division_Flag;
+  
+  //ID_Exe_register wires
+  wire [31:0] RtData_Out;
+  wire [31:0] RsData_Out;
+  wire [2:0] Rd_Add_Out;
+  wire Addition_Flag_Out;
+  wire Subtraction_Flag_Out;
+  wire Multiplication_Flag_Out;
+  wire Division_Flag_Out;
+
+ //Stage 3 wires
+  //wire [31:0] Exe_Result;
+  wire [31:0] ResultEXE;
+ //Exe_WB_register wires
+  wire [31:0] Exe_Result_Out;
+  wire [2:0] Rd_Address_EXE;
+
+  //Stage 4 wires
+  wire [31:0] Rt_WB;
+  wire [31:0] Rs_WB;
+  // Generating clock
+  
+  Clock Clock1(clk);
+  
+
+    //First Stage
+ First_Stage First_Stage1(clk,PC, Inst);
+
+  //IF-ID register  
+  IF_ID_reg IF_ID_reg1(clk,Inst,Inst_IF_Out);
+  
+
+  //Second Stage
+  Second_Stage Second_Stage1 (clk,Inst_IF_Out,Rt_Data, Rs_Data, Rd_Address, Addition_Flag, Subtraction_Flag, Multiplication_Flag, Division_Flag);
+ 
+
+  
+  //ID-Exe register
+  ID_Ex_reg ID_Ex_reg1(clk, Rt_Data, Rs_Data, Rd_Address,Addition_Flag,Subtraction_Flag,Multiplication_Flag,Division_Flag,RtData_Out,RsData_Out,Rd_Add_Out,Addition_Flag_Out,Subtraction_Flag_Out,Multiplication_Flag_Out,Division_Flag_Out);
+  
+//Third Stage 
+//Execution Stage
+  EXE Exe_1(ResultEXE,clk,RtData_Out,RsData_Out,Addition_Flag_Out,Subtraction_Flag_Out,Multiplication_Flag_Out,Division_Flag_Out);
+  
+   
+//Exe-WB register
+  
+  EXE_WB_reg EXE_WB_reg1 (clk,ResultEXE,Rd_Add_Out,Exe_Result_Out,Rd_Address_EXE);
+  
+ 
+//Fourth Stage
+  regfile regfile_Stage4 (clk,3'b000,3'b000, Rd_Address_EXE, ResultEXE,1'b1,Rt_WB,Rs_WB);
+
+     
+
+endmodule
+
+ 
+  
+  
+
+  
+ 
+
+  

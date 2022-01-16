@@ -1,0 +1,41 @@
+module InstructionSeperation( 
+	input[10:0] instruction,
+    output reg [1:0]opcode,
+    output reg [2:0] Rs,
+    output reg [2:0] Rt,
+    output reg [2:0] Rd);
+  
+  always@(instruction) begin
+       assign opcode [1:0] = instruction[10:9];
+        assign Rs[2:0] =  instruction[8:6];
+        assign Rt[2:0] =  instruction[5:3];
+        assign Rd[2:0] =  instruction[2:0];
+    
+  end
+    endmodule
+
+//////////////////////////////////////////////////////////
+
+module testbench();
+  
+reg [10:0] instruction_t;
+
+wire [1:0]opcode_t;
+wire [2:0] Rs_t;
+wire [2:0] Rt_t;
+wire [2:0] Rd_t;
+  
+  InstructionSeperation IS (instruction_t,opcode_t, Rs_t,Rt_t, Rd_t);
+
+  initial begin
+    instruction_t = 11'b11001010010;
+    #1
+    $display("instruction is %b", instruction_t);
+    $display("OpCode is %b", opcode_t);
+    $display("Rs is %b", Rs_t);
+    $display("Rt is %b", Rt_t);
+    $display("Rd is %b", Rd_t);
+  
+  end
+  endmodule
+    

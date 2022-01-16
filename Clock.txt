@@ -1,0 +1,29 @@
+module Clock(clk);
+  
+  output reg clk;
+ 
+  initial begin
+    clk <=0;
+  end
+  
+  always begin 
+    #20 clk <= ~clk;
+  end
+  
+endmodule
+
+//////////////////////////////////////////////////////
+
+module testbench();
+  wire clk_t;
+  
+  Clock test_Clock(clk_t);
+
+  initial begin 
+    
+    $monitor($time,"clock = %d",clk_t);
+    $dumpfile("dump.vcd");
+    $dumpvars(0);
+  end
+endmodule
+

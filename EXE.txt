@@ -1,0 +1,226 @@
+// Code your design here
+// Code your design here
+// Code your design here
+module EXE(output reg[31:0]out_result,
+           input clk,input [31:0]numberA,
+           input [31:0]numberB,
+           input flagAdd,input flagSub,input flagMul,input flagDiv);
+
+  reg signA, signB,signOP;
+  reg[7:0] diff, expA, expB;
+  reg[22:0] fractionA, fractionB;
+  reg[31:0]out;
+ 
+ 
+
+ 
+  // values of  fractions after comparing and shifting
+  reg[22:0] fractionA_1, fractionB_1;
+ 
+   // values of exponents after comparing and shifting  
+  reg[7:0] new_expA, new_expB;
+ 
+  // sum of the fractions
+  reg[22:0] fraction_sum;
+ 
+  //sum of the exponents
+  reg[7:0] exp_sum;
+ 
+ 
+  // the 31st bit is the sign of the number
+  //[31] == 0 : positive , [31]==1: negative
+  always@(posedge clk)begin
+      signA = numberA[31];
+     signB = numberB[31];
+ 
+  // 30th-23rd bits represent the exponent of the number
+    expA = numberA[30:23];
+    expB = numberB[30:23];
+     
+  //22nd-0 bits is represent the fraction
+    fractionA = numberA[22:0];
+    fractionB = numberB[22:0];
+    end
+  
+  //comparing the exponents and shifting the fractions
+  always @(posedge clk)
+    begin
+                  if(expA > expB)
+    begin
+       diff = expA - expB;
+      fractionA_1 = fractionA;
+      fractionB_1 = ({1'b1,fractionB} >> diff);
+      new_expB = expB + diff;
+      new_expA = expA;
+    end
+ 
+  else if (expA < expB)
+    begin
+       diff = expB - expA;
+      fractionA_1 = ({1'b1,fractionA} >> diff);
+      fractionB_1 = fractionB;
+       new_expA = expA + diff;
+      new_expB = expB;
+    end
+ 
+  else
+    begin
+      fractionA_1 = fractionA;
+      fractionB_1 = fractionB;
+      new_expA = expA;
+      new_expB = expB;
+    end
+
+ 
+     ///ADDITION	////checking signs output value and sign is different in each case
+      if(flagAdd == 1'b1)begin
+ 
+        if((signA==1'b0)&&(signB==1'b0))begin
+       fraction_sum = fractionA_1 + fractionB_1;
+          signOP=1'b0;end
+        else if((signA==1'b1)&&(signB==1'b1))begin
+        fraction_sum = fractionA_1 + fractionB_1;
+        signOP=1'b1; end
+        
+        else if((signA==1'b1)&&(signB==1'b0)&&(fractionA_1>fractionB_1))begin
+        fraction_sum = fractionA_1 - fractionB_1;
+        signOP=1'b1;end
+     
+      
+        else if((signA==1'b1)&&(signB==1'b0)&&(fractionA_1<fractionB_1))begin
+        fraction_sum = fractionB_1 - fractionA_1;
+        signOP=1'b0;end
+      
+        else if((signA==1'b0)&&(signB==1'b1)&&(fractionA_1>fractionB_1))begin
+        fraction_sum = fractionA_1 - fractionB_1;
+        signOP=1'b0; end
+     
+        else if((signA==1'b0)&&(signB==1'b1)&&(fractionA_1<fractionB_1))begin
+        fraction_sum = fractionB_1 - fractionA_1;
+        signOP=1'b1; end
+
+      
+      //the result's exponential after the addition of the fractions could be equal to any exp of A or B as both should be equalto each other
+      exp_sum = new_expA;
+       out_result[31]<=signOP;
+       out_result[30:23]<=exp_sum;
+       out_result[22:0]<=fraction_sum;
+    end
+   
+   // subtracting fractions
+ 
+      else if(flagSub ==1'b1)
+    begin
+      if((signA==1'b0)&&(signB==1'b0)&&(fractionA_1>fractionB_1))begin
+       fraction_sum = fractionA_1 - fractionB_1;
+        signOP=1'b0;
+        
+      end
+      else if((signA==1'b0)&&(signB==1'b0)&&(fractionA_1<fractionB_1))begin
+       fraction_sum = fractionB_1 - fractionA_1;
+        signOP=1'b1;
+        
+      end
+      else if((signA==1'b1)&&(signB==1'b1)&&(fractionA_1>fractionB_1))begin
+        fraction_sum = fractionA_1 - fractionB_1;
+        signOP=1'b1;
+      end
+      else if((signA==1'b1)&&(signB==1'b1)&&(fractionA_1<fractionB_1))begin
+        fraction_sum = fractionB_1 - fractionA_1;
+        signOP=1'b0;
+      end
+      else if((signA==1'b1)&&(signB==1'b0))begin
+        fraction_sum = fractionB_1 + fractionA_1;
+        signOP=1'b1;
+      end
+      else if((signA==1'b0)&&(signB==1'b1)&&(fractionA_1>fractionB_1))begin
+        fraction_sum = fractionB_1 + fractionA_1;
+        signOP=1'b0;
+      end
+      
+      
+     
+      //the result's exponential after the subtraction of the fractions could be equal to any exp of A or B as both should be equal to each other
+      exp_sum = new_expA;
+      
+      out_result[31]<=signOP;
+       out_result[30:23]<=exp_sum;
+       out_result[22:0]<=fraction_sum;
+    end
+   // multiplying fractions
+
+   
+      else if(flagMul == 1'b1)
+    begin
+      fraction_sum = fractionA_1 * fractionB_1;
+      //the result's exponential after multiplying is equal to to the summation of both exponentials
+      exp_sum = new_expA + new_expB;
+      if(signA||signB==1'b1)begin signOP=1'b1;end else begin  signOP=1'b0; end
+       out_result[31]<=signOP;
+       out_result[30:23]<=exp_sum;
+       out_result[22:0]<=fraction_sum;
+    end
+ 
+   // dividing fractions
+      else if(flagDiv==1'b1)
+    begin 
+     
+      fraction_sum = fractionA_1 / fractionB_1;
+ 
+      //the result's exponential after dividing the fractions will be the difference between exponentials a and b
+      
+      exp_sum = (new_expA)-(new_expB);
+       if(signA||signB==1'b1)begin signOP=1'b1;end else begin  signOP=1'b0; end
+       out_result[31]<=signOP;
+       out_result[30:23]<=exp_sum;
+      out_result[22:0]<=fraction_sum;
+    
+  end
+       
+     
+     
+    end
+   
+endmodule
+/////////////////////////////////////
+// Code your testbench here
+// or browse Examples
+module EXETB();
+  wire [31:0]out_result_;
+           reg clk_;
+  reg [31:0]numberA_;
+  reg [31:0]numberB_;
+
+  reg flagAdd_, flagSub_, flagMul_, flagDiv_;
+ 
+  EXE e(out_result_,clk_,numberA_,numberB_,flagAdd_, flagSub_, flagMul_, flagDiv_);
+ 
+  always
+begin
+clk_ = 1; #5; clk_ = 0; #5; // 10ns period
+end
+ 
+ 
+  initial begin
+  //1
+   numberA_ = 32'b00111111111000000000000000000000;
+    //0.5
+      numberB_ = 32'b00111111110000000000000000000000; 
+    flagDiv_=1'b1;
+   
+    #5
+    $display("A= %b",numberA_);
+    $display("B= %b",numberB_);
+    $monitor("Addition flag is %b", flagAdd_);
+    $monitor("subtraction flag is %b", flagSub_);
+    $monitor("multiplication flag is %b", flagSub_);
+    $monitor("division flag is %b", flagDiv_);
+    #5
+   
+   
+    $monitor("output=%b", out_result_);
+   
+ 
+  end
+  endmodule
+//00111111111000000000000000000000

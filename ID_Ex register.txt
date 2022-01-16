@@ -1,0 +1,77 @@
+module ID_Ex_reg(input clk,
+                 input [31:0] RtData_In,
+                 input [31:0] RsData_In,
+                 input [2:0] Rd_Add_In,
+                 input Addition_Flag_In,
+                 input Subtraction_Flag_In,
+				 input Multiplication_Flag_In,
+                 input Division_Flag_In,
+                 
+                 output reg [31:0] RtData_Out,
+                 output reg [31:0] RsData_Out,
+                 output reg [2:0] Rd_Add_Out,
+                 output reg Addition_Flag_Out,
+                 output reg Subtraction_Flag_Out,
+				 output reg Multiplication_Flag_Out,
+                 output reg Division_Flag_Out);
+            
+ always@(posedge clk) begin
+   assign RtData_Out = RtData_In;
+   assign RsData_Out = RsData_In;
+   assign Rd_Add_Out = Rd_Add_In;
+   assign Addition_Flag_Out = Addition_Flag_In;
+   assign Subtraction_Flag_Out = Subtraction_Flag_In;
+   assign Multiplication_Flag_Out = Multiplication_Flag_In;
+   assign Division_Flag_Out = Division_Flag_In ;
+   
+  end
+  
+endmodule
+/////////////////////////////
+
+// Code your testbench here
+// or browse Examples
+module testbench();
+  reg clk_t;
+  reg [31:0] RtData_In_t;
+  reg [31:0] RsData_In_t;
+  reg [2:0] Rd_Add_In_t;
+  reg Addition_Flag_In_t;
+  reg Subtraction_Flag_In_t;
+  reg Multiplication_Flag_In_t;
+  reg Division_Flag_In_t;
+  
+  wire [31:0] RtData_Out_t;
+  wire [31:0] RsData_Out_t;
+  wire [2:0] Rd_Add_Out_t;
+  wire Addition_Flag_Out_t;
+  wire Subtraction_Flag_Out_t;
+  wire Multiplication_Flag_Out_t;
+  wire Division_Flag_Out_t;
+  
+  ID_Ex_reg test_ID_Ex_reg (clk_t,RtData_In_t,RsData_In_t,Rd_Add_In_t,Addition_Flag_In_t,Subtraction_Flag_In_t,Multiplication_Flag_In_t,Division_Flag_In_t,RtData_Out_t,RsData_Out_t,Rd_Add_Out_t,Addition_Flag_Out_t,Subtraction_Flag_Out_t, Multiplication_Flag_Out_t,Division_Flag_Out_t);
+  
+  always 
+begin
+clk_t = 1; #5; clk_t = 0; #5; // 10ns period
+end
+  
+  initial begin
+   
+  RtData_In_t= 32'h00000311;
+  RsData_In_t=32'h00000002;
+  Rd_Add_In_t= 3'b111;
+  Addition_Flag_In_t=1'b1;
+  Subtraction_Flag_In_t=1'b0;
+  Multiplication_Flag_In_t=1'b0;
+  Division_Flag_In_t =1'b0;
+    #1
+    $display("Rt Data is %b", RtData_Out_t);
+    $display("Rs Data is %b", RsData_Out_t);
+    $display("Rd Address is %b", Rd_Add_Out_t);
+    $display("Addition Flag is %b", Addition_Flag_Out_t);
+    $display("Subtraction Flag  is %b", Subtraction_Flag_Out_t);
+    $display("Multiplication Flag  is %b", Multiplication_Flag_Out_t);
+    $display("Division Flag  is %b", Division_Flag_Out_t);
+  end
+endmodule

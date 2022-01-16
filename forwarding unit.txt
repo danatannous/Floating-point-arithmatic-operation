@@ -1,0 +1,43 @@
+module Forwarding_Unit(input [3:0] ID_EXE_RegisterRs,
+                       input [3:0] ID_EXE_RegisterRt, 
+                       input [3:0] EX_WB_Rd, 
+                       input EX_WB_regwrite,
+                       output reg [1:0] ForwardA,  
+                       output reg [1:0] ForwardB);
+  always @(*) begin
+    ForwardA = 1'b0;
+    ForwardB = 1'b0;
+    
+    if ((EX_WB_regwrite == 1'b1) && (EX_WB_Rd!=0)&&(EX_WB_Rd==  ID_EXE_RegisterRs))begin
+      ForwardA = 1'b1;end
+     
+    if ((EX_WB_regwrite == 1'b1) && (EX_WB_Rd!=0)&&(EX_WB_Rd== ID_EXE_RegisterRt))begin
+      ForwardB = 1'b1;end
+       
+   
+  end
+
+endmodule
+
+////////////////////////////////
+module Forwarding_Unit_tb();
+  reg [3:0] ID_EXE_RegisterRs_t;
+  reg [3:0] ID_EXE_RegisterRt_t; reg[3:0] EX_WB_Rd_t;
+  reg EX_WB_regwrite_t;
+  wire [1:0] ForwardA_t;
+  wire [1:0] ForwardB_t;
+  
+  Forwarding_Unit fwd( ID_EXE_RegisterRs_t,ID_EXE_RegisterRt_t, EX_WB_Rd_t,EX_WB_regwrite_t,ForwardA_t,ForwardB_t);
+  initial begin
+    ID_EXE_RegisterRs_t=4'b0001;
+    ID_EXE_RegisterRt_t=4'b0000;
+    EX_WB_Rd_t=4'b0001;
+    EX_WB_regwrite_t=1'b1;
+    #1
+    $display("forward A is %b", ForwardA_t);
+    $display("forward B is %b", ForwardB_t);
+  
+    
+  end
+  endmodule
+    
